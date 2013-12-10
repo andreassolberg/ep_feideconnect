@@ -1,10 +1,10 @@
 {
-    "parts": [
-        {
-            "name": "ep_feideconnect",
-            "hooks": {
-                "expressConfigure" : "ep_feideconnect/ep_feideconnect:expressConfigure"
-            }
-        }
-    ]
+	"parts": [
+		{
+			"name": "ep_feideconnect",
+			"hooks": {
+				"expressConfigure" : "ep_feideconnect/ep_feideconnect:expressConfigure"
+			}
+		}
+	]
 }
