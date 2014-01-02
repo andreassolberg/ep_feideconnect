@@ -1,14 +1,15 @@
 {
-	"name": "ep_feideconnect",
-	"version": "0.0.1",
-	"description": "Etherpad Lite Plugin for Feide Connect Authentication and Authorization",
-	"author": "Andreas Åkre Solberg <andreas.solberg@uninett.no>",
-	"contributors": [],
-	"dependencies": {
-		"jso" : "git://github.com/andreassolberg/jso-node.git"
-	},
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/andreassolberg/ep_feideconnect.git"
-	}
+  "name": "ep_feideconnect",
+  "version": "0.0.1",
+  "description": "Etherpad Lite Plugin for Feide Connect Authentication and Authorization",
+  "author": "Andreas Åkre Solberg <andreas.solberg@uninett.no>",
+  "contributors": [],
+  "dependencies": {
+    "jso": "git://github.com/andreassolberg/jso-node.git",
+    "async": "~0.2.9"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/andreassolberg/ep_feideconnect.git"
+  }
 }

@@ -3,7 +3,10 @@
 		{
 			"name": "ep_feideconnect",
 			"hooks": {
-				"expressConfigure" : "ep_feideconnect/ep_feideconnect:expressConfigure"
+				"expressConfigure" : "ep_feideconnect/ep_feideconnect:dummy",
+				"expressCreateServer": "ep_feideconnect/ep_feideconnect:expressCreateServer",
+				"authorize": "ep_feideconnect/ep_feideconnect:authorize",
+				"authenticate": "ep_feideconnect/ep_feideconnect:authenticate"
 			}
 		}
 	]
