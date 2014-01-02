@@ -157,13 +157,20 @@ exports.expressCreateServer = function(hook_name, args, cb) {
 		EAPI.listPads(req.session.user, function(data) {
 			res.writeHead(200, {"Content-Type": "text/html; charset=utf-8"});
 
-
-
-			var body = '<ul>';
+			var body = '';
+			body += '<h2>List of pads</h2>';
+			body += '<ul>';
 			for(var i =0; i < data.length; i++) {
-				body += '<li><a href="/p/' + data[i] + '">' + data[i] + '</a></li>';
+				body += '<li><a target="_blank" href="/p/' + data[i].padID + '">' + data[i].padID + '</a>' + 
+					'<pre>' + JSON.stringify(data[i], undefined, 2) + '</pre>' +
+					'</li>';
 			}
+			if (data.length === 0) {
+				body += '<li style="color: #ccc">No pads available</li>';
+			}
+
 			body += '</ul>';
+
 
 			res.end(body);	
 		});
