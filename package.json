@@ -6,7 +6,8 @@
   "contributors": [],
   "dependencies": {
     "jso": "git://github.com/andreassolberg/jso-node.git",
-    "async": "~0.2.9"
+    "async": "*",
+    "express": "*"
   },
   "repository": {
     "type": "git",

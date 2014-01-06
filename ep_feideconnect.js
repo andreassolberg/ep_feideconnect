@@ -6,8 +6,8 @@ var
 	EAPI = require('./lib/EAPI')
 	;
 
-var settings = require('/Users/andreas/wcn/etherpad-lite/src/node/utils/Settings');
-var API = require('/Users/andreas/wcn/etherpad-lite/src/node/db/API');
+var settings = require('ep_etherpad-lite/node/utils/Settings');
+var API = require('ep_etherpad-lite/node/db/API');
 // var settings = require('../../src/node/utils/Settings');
 
 console.log("Loaded jso", jso);
