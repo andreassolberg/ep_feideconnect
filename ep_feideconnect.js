@@ -10,7 +10,7 @@ var settings = require('/Users/andreas/wcn/etherpad-lite/src/node/utils/Settings
 var API = require('/Users/andreas/wcn/etherpad-lite/src/node/db/API');
 // var settings = require('../../src/node/utils/Settings');
 
-console.log("Loaded jso", jso);
+
 var store = new express.session.MemoryStore();
 var sessionConfig = { 
 	// path: '/', 
@@ -97,6 +97,41 @@ exports.expressCreateServer = function(hook_name, args, cb) {
 		fc.getMiddleware()
 			.requireScopes(['userinfo'])
 	);
+
+	app.use('/dashboard/',  function(req, res, next) {
+
+		var maxAge = 3600*24*365;
+		var until =  (new Date).getTime() + (maxAge);
+		if (!req.cookies['sessionID']) {
+
+			EAPI.getSession(req.session.user, function(data) {
+				var sessionID = data.join(',');
+				res.cookie('sessionID', sessionID, { "maxAge": maxAge, "httpOnly": false });
+				next();
+			});
+		} else {
+			next();
+		}
+
+	});
+	app.use('/p/',  function(req, res, next) {
+
+		var maxAge = 3600*24*365;
+		var until =  (new Date).getTime() + (maxAge);
+		if (!req.cookies['sessionID']) {
+
+			EAPI.getSession(req.session.user, function(data) {
+				var sessionID = data.join(',');
+				res.cookie('sessionID', sessionID, { "maxAge": maxAge, "httpOnly": false });
+				next();
+			});
+		} else {
+			next();
+		}
+
+	});
+
+
 	// app.use('/', fc.getMiddleware());
 
 	app.use('/p/', function(req, res, next) {
@@ -107,11 +142,16 @@ exports.expressCreateServer = function(hook_name, args, cb) {
 		next();
 	});
 
+	// app.use('/static', express.static('//Users/andreas/wcn/ep_feideconnect/webapp'));
+	app.use('/dashboard/', express.static(__dirname + '/webapp/'));
 
+	app.use(express.bodyParser());
 	app.use(app.router);
 
 
-	app.get('/dashboard/setupSession', function(req, res, next) {
+	
+
+	app.get('/dashboard-api/setupSession', function(req, res, next) {
 
 		var maxAge = 3600*24*365;
 		var until =  (new Date).getTime() + (maxAge);
@@ -124,17 +164,17 @@ exports.expressCreateServer = function(hook_name, args, cb) {
 			body += 'Setting session identifier in sessionID Cookie: ' + sessionID + "\n";
 
 
-			res.cookie('sessionID',sessionID, { "maxAge": maxAge, "httpOnly": false });
+			res.cookie('sessionID', sessionID, { "maxAge": maxAge, "httpOnly": false });
 
 			res.writeHead(200, {"Content-Type": "text/plain; charset=utf-8"});
 			res.end(body);	
 
 		});
 
-
-
 	});
-	app.get('/dashboard/api/session', function(req, res, next) {
+
+
+	app.get('/dashboard-api/session', function(req, res, next) {
 
 
 		EAPI.getSession(req.session.user, function(data) {
@@ -152,7 +192,7 @@ exports.expressCreateServer = function(hook_name, args, cb) {
 
 	});
 
-	app.get('/dashboard/pads', function(req, res, next) {
+	app.get('/dashboard-api/padshtml', function(req, res, next) {
 		// q.session.user,
 		EAPI.listPads(req.session.user, function(data) {
 			res.writeHead(200, {"Content-Type": "text/html; charset=utf-8"});
@@ -177,26 +217,47 @@ exports.expressCreateServer = function(hook_name, args, cb) {
 
 	});
 
+	app.get('/dashboard-api/userinfo', function(req, res, next) {
 
-	app.get('/dashboard/api/pads', function(req, res, next) {
+		res.writeHead(200, {"Content-Type": "application/json; charset=utf-8"});
+		res.end(JSON.stringify(req.session.user, undefined, 2));	
+		
+
+	});
+
+
+	app.get('/dashboard-api/pads', function(req, res, next) {
 		// q.session.user,
 		EAPI.listPads(req.session.user, function(data) {
-			res.writeHead(200, {"Content-Type": "text/plain; charset=utf-8"});
-			res.end("Data: \n" + JSON.stringify(data, undefined, 2));	
+			res.writeHead(200, {"Content-Type": "application/json; charset=utf-8"});
+			res.end(JSON.stringify(data, undefined, 2));	
 		});
 
 	});
 
 
-	app.get('/dashboard/api/pad/create', function(req, res, next) {
+	app.post('/dashboard-api/pad/create', function(req, res, next) {
 
 		// createPad = function(name, fcgroupid, callback
 		var fcgroupid = 'uwap:grp:uninett:org:orgunit:AVD-U2';
 		fcgroupid = 'uwap:grp:uninett:org:orgunit:SEK-U23';
 
-		EAPI.createPad('baluba2', fcgroupid, function(data) {
-			res.writeHead(200, {"Content-Type": "text/plain; charset=utf-8"});
-			res.end("Created pad in group [" + fcgroupid + "]: \n" + JSON.stringify(data, undefined, 2));	
+
+		console.log("BODY: ", req.body);
+		var newObject = req.body;
+		console.log("Creating new Object.", newObject);
+
+		// 	res.writeHead(200, {"Content-Type": "application/json; charset=utf-8"});
+		// 	res.end(JSON.stringify(newObject, undefined, 2));	
+
+		// return;
+
+		EAPI.createPad(newObject.name, newObject.groupid, function(data) {
+			res.writeHead(200, {"Content-Type": "application/json; charset=utf-8"});
+			res.end(JSON.stringify(data, undefined, 2));	
+
+			// res.writeHead(200, {"Content-Type": "text/plain; charset=utf-8"});
+			// res.end("Created pad in group [" + newObject.groupid + "]: \n" + JSON.stringify(data, undefined, 2));	
 		});
 
 	});
@@ -204,7 +265,7 @@ exports.expressCreateServer = function(hook_name, args, cb) {
 
 
 
-	app.get('/dashboard', function(req, res, next) {
+	app.get('/dashboard_', function(req, res, next) {
 
 		var body = 'Hello:';
 
@@ -248,8 +309,6 @@ exports.expressCreateServer = function(hook_name, args, cb) {
 							res.cookie('sessionID',sess.sessionID, { "maxAge": maxAge, "httpOnly": false });
 
 							body += "\n\nURL http://localhost:3000/p/" + list.padIDs[0];
-
-
 							body += "\n\nsession: " + JSON.stringify(sess, undefined, 2);
 							body += "\n\nlist: " + JSON.stringify(list, undefined, 2);
 							body += "\n\nPAD CREATED: " + err + " " + JSON.stringify(data, undefined, 2);
@@ -258,7 +317,7 @@ exports.expressCreateServer = function(hook_name, args, cb) {
 							body += "\n\nUser object" + JSON.stringify(req.session.user, undefined, 2);
 
 							res.writeHead(200, {"Content-Type": "text/plain; charset=utf-8"});
-							res.end(body);	
+							res.end(body);
 
 						});
 
@@ -278,38 +337,11 @@ exports.expressCreateServer = function(hook_name, args, cb) {
 		});
 
 		// var l = API.listAllPads(function(err, l) {
-
 		// 	// body += "\n\n" + JSON.stringify(l, undefined, 2);
-
-
-
-
-
-
 		// });
-
-
 
 	});
 
 
 
-
-
-	// args.app.use(function(req, res, next) {
-	// 	if (req.path.match(/^\/(static|javascripts|pluginfw)/)) {
-	// 		next();
-	// 	} else {
-
-			
-
-
-
-	// 		// github.orgAccess({
-	// 		// 	appId: settings.users.github.appId,
-	// 		// 	appSecret: settings.users.github.appSecret,
-	// 		// 	callback: settings.users.github.callback
-	// 		// }, settings.users.github.org).handle(req, res, next);
-	// 	}
-	// });
 }
