@@ -100,12 +100,17 @@ exports.expressCreateServer = function(hook_name, args, cb) {
 
 	app.use('/dashboard/',  function(req, res, next) {
 
+		console.log("Middleware to do session handling");
+
 		var maxAge = 3600*24*365;
 		var until =  (new Date).getTime() + (maxAge);
 		if (!req.cookies['sessionID']) {
 
+			console.log("Session cookie is not set, obtaining new session.");
+
 			EAPI.getSession(req.session.user, function(data) {
 				var sessionID = data.join(',');
+				console.log("Setting session ID ", sessionID);
 				res.cookie('sessionID', sessionID, { "maxAge": maxAge, "httpOnly": false });
 				next();
 			});
@@ -118,14 +123,22 @@ exports.expressCreateServer = function(hook_name, args, cb) {
 
 		var maxAge = 3600*24*365;
 		var until =  (new Date).getTime() + (maxAge);
+
+		console.log("Middleware to do session handling");
+
 		if (!req.cookies['sessionID']) {
+
+			console.log("Session cookie is not set, obtaining new session.");
+
 
 			EAPI.getSession(req.session.user, function(data) {
 				var sessionID = data.join(',');
+				console.log("Setting session ID ", sessionID);
 				res.cookie('sessionID', sessionID, { "maxAge": maxAge, "httpOnly": false });
 				next();
 			});
 		} else {
+			console.log("Session cookie is set");
 			next();
 		}
 
@@ -149,7 +162,9 @@ exports.expressCreateServer = function(hook_name, args, cb) {
 	app.use(app.router);
 
 
-	
+	app.get(/^\/$/, function(req, res, next) {
+		res.redirect('/dashboard/');
+	});
 
 	app.get('/dashboard-api/setupSession', function(req, res, next) {
 
