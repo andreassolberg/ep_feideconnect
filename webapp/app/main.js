@@ -91,6 +91,12 @@ define(function(require) {
 
 		loadUserinfo();
 
+		setInterval(function(){ 
+			loadPadlist();
+		}, 8000);
+
+
+
 		$("#btnStoreNewDocument").on('click', function() {
 
 			createNewDocument();
