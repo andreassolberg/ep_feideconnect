@@ -3,12 +3,18 @@ var
 	jso = require('jso'),
 	async = require('async'),
 
+	EtherpadConfigManager = require('./lib/configManagers').EtherpadConfigManager,
+
 	EAPI = require('./lib/EAPI')
 	;
 
-var settings = require('ep_etherpad-lite/node/utils/Settings');
-var API = require('ep_etherpad-lite/node/db/API');
+var settings = require('/Users/andreas/wcn/etherpad-lite/src/node/utils/Settings');
 // var settings = require('../../src/node/utils/Settings');
+// var settings = require('ep_etherpad-lite/node/utils/Settings');
+var API = require('/Users/andreas/wcn/etherpad-lite/src/node/db/API');
+// var API = require('ep_etherpad-lite/node/db/API');
+
+
 
 
 var store = new express.session.MemoryStore();
@@ -80,23 +86,43 @@ exports.expressCreateServer = function(hook_name, args, cb) {
 	console.log(options);	
 
 	app.use(express.cookieParser());
+	app.use(express.bodyParser());
 	// app.use(express.session(sessionConfig));
 
-	app.use('/callback/FeideConnect', 
-		fc.getMiddleware()
-			.callback()
-			.authenticate() 
-	);
+	// app.use('/callback/FeideConnect', 
+	// 	fc.getMiddleware()
+	// 		.callback()
+	// 		.authenticate() 
+	// );
 
 	// app.use('/', o.getAuthenticationMiddleware() );
-	app.use('/p/', 
-		fc.getMiddleware()
-			.requireScopes(['userinfo'])
-	);
-	app.use('/dashboard/', 
-		fc.getMiddleware()
-			.requireScopes(['userinfo'])
-	);
+	// app.use('/p/', 
+	// 	fc.getMiddleware()
+	// 		.requireScopes(['userinfo'])
+	// );
+	// app.use('/dashboard/', 
+	// 	fc.getMiddleware()
+	// 		.requireScopes(['userinfo'])
+	// );
+
+	var providerID = 'feideconnect';
+	var cm = new EtherpadConfigManager(options.oauth);
+	var o = new jso.FeideConnect(cm);
+
+	app.use('/p/', o.getMiddleware().requireScopes(['userinfo']) );
+	app.use('/dashboard/', o.getMiddleware().requireScopes(['userinfo']) );
+
+
+	o.setupMiddleware('/_feideconnect', app);
+
+	app.use('/', function(req, res, next) {
+		console.log("Checking for redirect on path " + req.url);
+		next();
+		// if (req.url !== '/') next();
+
+		// res.redirect('/dashboard/');
+
+	});
 
 	app.use('/dashboard/',  function(req, res, next) {
 
