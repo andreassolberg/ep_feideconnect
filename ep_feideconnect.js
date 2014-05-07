@@ -5,19 +5,22 @@ var
 
 	EtherpadConfigManager = require('./lib/configManagers').EtherpadConfigManager,
 
-	EAPI = require('./lib/EAPI')
+	EAPI = require('./lib/EAPI'),
+	session = require('express-session'),
+	cookieParser = require('cookie-parser'),
+	bodyParser = require('body-parser')
 	;
 
-var settings = require('/Users/andreas/wcn/etherpad-lite/src/node/utils/Settings');
+// var settings = require('/Users/andreas/wcn/etherpad-lite/src/node/utils/Settings');
 // var settings = require('../../src/node/utils/Settings');
-// var settings = require('ep_etherpad-lite/node/utils/Settings');
-var API = require('/Users/andreas/wcn/etherpad-lite/src/node/db/API');
-// var API = require('ep_etherpad-lite/node/db/API');
+var settings = require('ep_etherpad-lite/node/utils/Settings');
+// var API = require('/Users/andreas/wcn/etherpad-lite/src/node/db/API');
+var API = require('ep_etherpad-lite/node/db/API');
 
 
 
 
-var store = new express.session.MemoryStore();
+var store = new session.MemoryStore();
 var sessionConfig = { 
 	// path: '/', 
 	// httpOnly: true, 
@@ -33,6 +36,8 @@ var sessionConfig = {
 };
 
 
+
+console.log("ROOT", settings.root);
 
 var options = settings.ep_feideconnect;
 var fc = new jso.FeideConnect(options.oauth);
@@ -85,8 +90,8 @@ exports.expressCreateServer = function(hook_name, args, cb) {
 	console.log(" >>>> EXPRESS PLUGIN FEIDE CONNECT Talking.. Whos there?");
 	console.log(options);	
 
-	app.use(express.cookieParser());
-	app.use(express.bodyParser());
+	app.use(cookieParser());
+	app.use(bodyParser());
 	// app.use(express.session(sessionConfig));
 
 	// app.use('/callback/FeideConnect', 
@@ -184,7 +189,7 @@ exports.expressCreateServer = function(hook_name, args, cb) {
 	// app.use('/static', express.static('//Users/andreas/wcn/ep_feideconnect/webapp'));
 	app.use('/dashboard/', express.static(__dirname + '/webapp/'));
 
-	app.use(express.bodyParser());
+	app.use(bodyParser());
 	app.use(app.router);
 
 

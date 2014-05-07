@@ -7,10 +7,15 @@
   "dependencies": {
     "jso": "git://github.com/andreassolberg/jso-node.git",
     "async": "*",
-    "express": "*"
+
+    "express": "*",
+    "express-session": "*",
+    "cookie-parser": "*",
+    "body-parser": "*"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/andreassolberg/ep_feideconnect.git"
   }
 }
+
