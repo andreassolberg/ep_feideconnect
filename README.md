@@ -35,7 +35,9 @@ Configure references and install dependencies.
 
 	cd ../etherpad-lite
 	npm link ep_feideconnect
+	cd src
 	npm link
+	cd ..
 
 	cd ../ep_feideconnect
 	npm link ep_etherpad-lite
