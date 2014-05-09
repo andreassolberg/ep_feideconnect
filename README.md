@@ -43,7 +43,7 @@ Configure references and install dependencies.
 	npm link ep_etherpad-lite
 
 	cd ../etherpad-lite
-	touch var/metadata.js
+	cp ../ep_feideconnect/etc/metadata.js > var/metadata.js
 
 Then setup `settings.json`, the configuration file. And then run etherpad:
 
