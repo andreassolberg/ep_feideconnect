@@ -10,17 +10,23 @@ define(function(require) {
 
 			$("span.dataUsername").empty().append(user.name);
 
-			groups = user.groups;
+			// groups = user.groups;
+
+			for(var i = 0; i < user.groups.length; i++) {
+				groups[user.groups[i].id] = user.groups[i];
+			}
 
 			console.log(user.groups);
 			var gs = $("select.selectGroup");
 			gs.empty();
 			gs.append('<option value="_blank" disabled="disabled" selected="selected">Velg en gruppe</option>');
-			for(var key in user.groups) {
-				gs.append('<option value="' + key + '">' + user.groups[key].title + '</option>');
+			for(var key in groups) {
+				gs.append('<option value="' + key + '">' + groups[key].displayName + '</option>');
 			}
+
+			loadPadlist();
 		});
-		loadPadlist();
+		
 	}
 
 	var loadPadlist = function() {
@@ -35,7 +41,7 @@ define(function(require) {
 
 				var gname = data[i].groupid;
 				if (groups[data[i].groupid]) {
-					gname = groups[data[i].groupid].title;
+					gname = groups[data[i].groupid].displayName;
 				}
 				container.append('<tr>' + 
 					'<td><a target="_blank" href="/p/' + data[i].padid + '">' + data[i].name + '</a></td>' + 

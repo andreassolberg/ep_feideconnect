@@ -37,10 +37,10 @@ var sessionConfig = {
 
 
 
-console.log("ROOT", settings.root);
+// console.log("ROOT", settings.root);
 
 var options = settings.ep_feideconnect;
-var fc = new jso.FeideConnect(options.oauth);
+// var fc = new jso.FeideConnect(options.oauth);
 
 
 exports.authenticate = function(hook_name, args, cb) {
@@ -88,11 +88,11 @@ exports.expressCreateServer = function(hook_name, args, cb) {
 	var app = args.app;
 
 	console.log(" >>>> EXPRESS PLUGIN FEIDE CONNECT Talking.. Whos there?");
-	console.log(options);	
+	// console.log(options);	
 
 	app.use(cookieParser());
 	app.use(bodyParser());
-	// app.use(express.session(sessionConfig));
+	app.use(session(sessionConfig));
 
 	// app.use('/callback/FeideConnect', 
 	// 	fc.getMiddleware()
@@ -114,6 +114,9 @@ exports.expressCreateServer = function(hook_name, args, cb) {
 	var cm = new EtherpadConfigManager(options.oauth);
 	var o = new jso.FeideConnect(cm);
 
+	app.use('/callback/FeideConnect', 
+		o.getMiddleware().callback().authenticate() 
+	);
 	app.use('/p/', o.getMiddleware().requireScopes(['userinfo']) );
 	app.use('/dashboard/', o.getMiddleware().requireScopes(['userinfo']) );
 
@@ -284,9 +287,9 @@ exports.expressCreateServer = function(hook_name, args, cb) {
 
 	app.post('/dashboard-api/pad/create', function(req, res, next) {
 
-		// createPad = function(name, fcgroupid, callback
-		var fcgroupid = 'uwap:grp:uninett:org:orgunit:AVD-U2';
-		fcgroupid = 'uwap:grp:uninett:org:orgunit:SEK-U23';
+		// // createPad = function(name, fcgroupid, callback
+		// var fcgroupid = 'uwap:grp:uninett:org:orgunit:AVD-U2';
+		// fcgroupid = 'uwap:grp:uninett:org:orgunit:SEK-U23';
 
 
 		console.log("BODY: ", req.body);
@@ -295,7 +298,6 @@ exports.expressCreateServer = function(hook_name, args, cb) {
 
 		// 	res.writeHead(200, {"Content-Type": "application/json; charset=utf-8"});
 		// 	res.end(JSON.stringify(newObject, undefined, 2));	
-
 		// return;
 
 		EAPI.createPad(newObject.name, newObject.groupid, function(data) {
@@ -323,14 +325,14 @@ exports.expressCreateServer = function(hook_name, args, cb) {
 			var memberOfGroups = req.session.user.groups.getOwnPropertyNames();
 			console.log("member of groups", memberOfGroups);
 
-			async.map(['file1','file2','file3'], function(el, callback) {
-				callback(null, el);
+			// async.map(['file1','file2','file3'], function(el, callback) {
+			// 	callback(null, el);
 
-			}, function(err, results){
-				// results is now an array of stats for each file
-				console.log("Results, async: ", results);
+			// }, function(err, results){
+			// 	// results is now an array of stats for each file
+			// 	console.log("Results, async: ", results);
 
-			});
+			// });
 
 
 			API.createGroupIfNotExistsFor('uwap:grp:uninett:org:orgunit:AVD-U2', function(err, group) {
