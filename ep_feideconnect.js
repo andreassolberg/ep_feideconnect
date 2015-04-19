@@ -18,8 +18,6 @@ var settings = require('ep_etherpad-lite/node/utils/Settings');
 var API = require('ep_etherpad-lite/node/db/API');
 
 
-
-
 var store = new session.MemoryStore();
 var sessionConfig = { 
 	// path: '/', 
@@ -114,22 +112,26 @@ exports.expressCreateServer = function(hook_name, args, cb) {
 	var cm = new EtherpadConfigManager(options.oauth);
 	var o = new jso.FeideConnect(cm);
 
+	var x = o.getMiddleware().callback().authenticate().create() ;
+	console.log("Got middleware:");
+	console.log(x);
+	console.log(x.handle);
+
 	app.use('/callback/FeideConnect', 
-		o.getMiddleware().callback().authenticate() 
+		o.getMiddleware().callback().authenticate().create()
 	);
-	app.use('/p/', o.getMiddleware().requireScopes(['userinfo']) );
-	app.use('/dashboard/', o.getMiddleware().requireScopes(['userinfo']) );
+	app.use('/p/', o.getMiddleware().requireScopes(['userinfo']).create() );
+	app.use('/dashboard/', o.getMiddleware().requireScopes(['userinfo']).create() );
 
 
-	o.setupMiddleware('/_feideconnect', app);
+	// o.setupMiddleware('/_feideconnect', app);
 
 	app.use('/', function(req, res, next) {
 		console.log("Checking for redirect on path " + req.url);
-		next();
-		// if (req.url !== '/') next();
 
-		// res.redirect('/dashboard/');
-
+		if (req.url !== '/') { return next(); }
+		res.redirect('/dashboard/');
+		// next();
 	});
 
 	app.use('/dashboard/',  function(req, res, next) {
@@ -137,8 +139,8 @@ exports.expressCreateServer = function(hook_name, args, cb) {
 		console.log("Middleware to do session handling");
 
 		var maxAge = 3600*24*365;
-		var until =  (new Date).getTime() + (maxAge);
-		if (!req.cookies['sessionID']) {
+		var until =  (new Date()).getTime() + maxAge;
+		if (!req.cookies.sessionID) {
 
 			console.log("Session cookie is not set, obtaining new session.");
 
@@ -193,7 +195,7 @@ exports.expressCreateServer = function(hook_name, args, cb) {
 	app.use('/dashboard/', express.static(__dirname + '/webapp/'));
 
 	app.use(bodyParser());
-	app.use(app.router);
+	// app.use(app.router);
 
 
 	app.get(/^\/$/, function(req, res, next) {
