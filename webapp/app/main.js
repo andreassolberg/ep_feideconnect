@@ -140,7 +140,7 @@ define(function(require) {
 
 			setTimeout(function() {
 				window.location.href = 'https://auth.feideconnect.no/logout';
-			}, 10000);
+			}, 100);
 			
 
 
