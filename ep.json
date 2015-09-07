@@ -7,6 +7,9 @@
 				"expressCreateServer": "ep_feideconnect/ep_feideconnect:expressCreateServer",
 				"authorize": "ep_feideconnect/ep_feideconnect:authorize",
 				"authenticate": "ep_feideconnect/ep_feideconnect:authenticate"
+			},
+			"client_hooks": {
+				"postAceInit" : "ep_feideconnect/static/js/index"
 			}
 		}
 	]
