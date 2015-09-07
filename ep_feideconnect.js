@@ -124,6 +124,14 @@ exports.expressCreateServer = function(hook_name, args, cb) {
 	app.use('/dashboard/', o.getMiddleware().requireScopes(['userinfo']).create() );
 
 
+	app.use('/logout', function(req, res, next) {
+
+		res.clearCookie('express_sid',  { path: '/' }); 
+		return res.redirect('https://auth.feideconnect.no/logout');
+
+	});
+
+
 	// o.setupMiddleware('/_feideconnect', app);
 
 	app.use('/', function(req, res, next) {

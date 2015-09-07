@@ -86,6 +86,14 @@ define(function(require) {
 
 	}
 
+	function removeItem(sKey, sPath, sDomain) {
+	    document.cookie = encodeURIComponent(sKey) + 
+	                  "=; expires=Thu, 01 Jan 1970 00:00:00 GMT" +  
+	                  (sPath ? "; path=" + sPath : "");
+	}
+
+
+
 	$(document).ready(function() {
 		
 		var now = (new Date());
@@ -119,6 +127,25 @@ define(function(require) {
 
 
 		});
+
+
+		$("a#logout").on('click', function(e) {
+
+			e.preventDefault(); e.stopPropagation();
+
+			removeItem("sessionID", '/', 'samskrive.uninett.no');
+			removeItem("express_sid", '/', 'samskrive.uninett.no');
+			removeItem("token", '/', 'samskrive.uninett.no');
+			console.error("Logging out");
+
+			setTimeout(function() {
+				window.location.href = 'https://auth.feideconnect.no/logout';
+			}, 10000);
+			
+
+
+		});
+
 
 
 	});
